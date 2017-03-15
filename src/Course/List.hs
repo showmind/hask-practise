@@ -253,6 +253,7 @@ seqOptional ::
 seqOptional =
   error "todo: Course.List#seqOptional"
 
+
 -- | Find the first element in the list matching the predicate.
 --
 -- >>> find even (1 :. 3 :. 5 :. Nil)
