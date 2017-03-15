@@ -75,8 +75,10 @@ headOr ::
   a
   -> List a
   -> a
-headOr =
-  error "todo: Course.List#headOr"
+headOr x Nil = x
+headOr _ (y:ys)=y
+
+  --error "todo: Course.List#headOr"
 
 -- | The product of the elements of a list.
 --
@@ -88,8 +90,10 @@ headOr =
 product ::
   List Int
   -> Int
+product Nil=0
 product =
-  error "todo: Course.List#product"
+  foldRight (*) 1
+--error "todo: Course.List#product"
 
 -- | Sum the elements of the list.
 --
@@ -104,8 +108,7 @@ sum ::
   List Int
   -> Int
 sum =
-  error "todo: Course.List#sum"
-
+  foldRight (+) 0
 -- | Return the length of the list.
 --
 -- >>> length (1 :. 2 :. 3 :. Nil)
@@ -116,7 +119,8 @@ length ::
   List a
   -> Int
 length =
-  error "todo: Course.List#length"
+  foldRight (\x a->a+1) 0
+--error "todo: Course.List#length"
 
 -- | Map the given function on each element of the list.
 --
@@ -130,8 +134,9 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo: Course.List#map"
+map f=
+  foldRight ((:).f) Nil
+--error "todo: Course.List#map"
 
 -- | Return elements satisfying the given predicate.
 --
@@ -147,8 +152,9 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo: Course.List#filter"
+filter p =
+  foldRight (\a z->if p a then a:z else z) Nil
+--error "todo: Course.List#filter"
 
 -- | Append two lists to a new list.
 --
@@ -167,7 +173,9 @@ filter =
   -> List a
   -> List a
 (++) =
-  error "todo: Course.List#(++)"
+  flip (foldRight (:))
+
+  --error "todo: Course.List#(++)"
 
 infixr 5 ++
 
@@ -185,7 +193,8 @@ flatten ::
   List (List a)
   -> List a
 flatten =
-  error "todo: Course.List#flatten"
+  foldRight (++) Nil
+  --error "todo: Course.List#flatten"
 
 -- | Map a function then flatten to a list.
 --
@@ -202,7 +211,8 @@ flatMap ::
   -> List a
   -> List b
 flatMap =
-  error "todo: Course.List#flatMap"
+  flatten.map
+  --error "todo: Course.List#flatMap"
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
@@ -212,11 +222,12 @@ flattenAgain ::
   List (List a)
   -> List a
 flattenAgain =
-  error "todo: Course.List#flattenAgain"
+  flatMap id
+  --error "todo: Course.List#flattenAgain"
 
 -- | Convert a list of optional values to an optional list of values.
 --
--- * If the list contains all `Full` values, 
+-- * If the list contains all `Full` values,
 -- then return `Full` list of values.
 --
 -- * If the list contains one or more `Empty` values,
