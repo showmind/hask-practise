@@ -250,7 +250,8 @@ flattenAgain =
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional =
+seqOptional ls=
+  if filter (== Empty) ls =/ Nil then Empty else Full $ map (\(Full a) ->a) ls
   error "todo: Course.List#seqOptional"
 
 
@@ -274,8 +275,10 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find =
-  error "todo: Course.List#find"
+find p xs= case filter p xs of Nil    -> Empty
+                               (a:as) ->a
+
+--   error "todo: Course.List#find"
 
 -- | Determine if the length of the given list is greater than 4.
 --
@@ -293,8 +296,9 @@ find =
 lengthGT4 ::
   List a
   -> Bool
-lengthGT4 =
-  error "todo: Course.List#lengthGT4"
+lengthGT4 xs=
+  length xs >4
+--   error "todo: Course.List#lengthGT4"
 
 -- | Reverse a list.
 --
@@ -311,7 +315,8 @@ reverse ::
   List a
   -> List a
 reverse =
-  error "todo: Course.List#reverse"
+  foldLeft (flip (:)) Nil
+--   error "todo: Course.List#reverse"
 
 -- | Produce an infinite `List` that seeds with the given value at its head,
 -- then runs the given function for subsequent elements
@@ -325,8 +330,10 @@ produce ::
   (a -> a)
   -> a
   -> List a
-produce =
-  error "todo: Course.List#produce"
+produce f x =
+  let r= f x in
+   take 4 $ r `seq` r :. produce f r
+--   error "todo: Course.List#produce"
 
 -- | Do anything other than reverse a list.
 -- Is it even possible?
@@ -340,8 +347,8 @@ produce =
 notReverse ::
   List a
   -> List a
-notReverse =
-  error "todo: Is it even possible?"
+notReverse =id
+--   error "todo: Is it even possible?"
 
 ---- End of list exercises
 
