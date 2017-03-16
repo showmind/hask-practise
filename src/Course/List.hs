@@ -76,7 +76,7 @@ headOr ::
   -> List a
   -> a
 headOr x Nil = x
-headOr _ (y:ys)=y
+headOr _ (y:.ys)=y
 
   --error "todo: Course.List#headOr"
 
@@ -135,14 +135,14 @@ map ::
   -> List a
   -> List b
 map f=
-  foldRight ((:).f) Nil
+  foldRight ((:.).f) Nil
 --error "todo: Course.List#map"
 
 -- | Return elements satisfying the given predicate.
 --
 -- >>> filter even (1 :. 2 :. 3 :. 4 :. 5 :. Nil)
 -- [2,4]
---
+--/
 -- prop> headOr x (filter (const True) infinity) == 0
 --
 -- prop> filter (const True) x == x
@@ -153,7 +153,7 @@ filter ::
   -> List a
   -> List a
 filter p =
-  foldRight (\a z->if p a then a:z else z) Nil
+  foldRight (\a z->if p a then a:.z else z) Nil
 --error "todo: Course.List#filter"
 
 -- | Append two lists to a new list.
@@ -173,7 +173,7 @@ filter p =
   -> List a
   -> List a
 (++) =
-  flip (foldRight (:))
+  flip (foldRight (:.))
 
   --error "todo: Course.List#(++)"
 
@@ -252,7 +252,7 @@ seqOptional ::
   -> Optional (List a)
 seqOptional ls=
   if filter (== Empty) ls =/ Nil then Empty else Full $ map (\(Full a) ->a) ls
-  error "todo: Course.List#seqOptional"
+--   error "todo: Course.List#seqOptional"
 
 
 -- | Find the first element in the list matching the predicate.
@@ -276,7 +276,7 @@ find ::
   -> List a
   -> Optional a
 find p xs= case filter p xs of Nil    -> Empty
-                               (a:as) ->a
+                               (a:.as) ->a
 
 --   error "todo: Course.List#find"
 
@@ -297,7 +297,7 @@ lengthGT4 ::
   List a
   -> Bool
 lengthGT4 xs=
-  length xs >4
+  length xs > 4
 --   error "todo: Course.List#lengthGT4"
 
 -- | Reverse a list.
@@ -315,7 +315,7 @@ reverse ::
   List a
   -> List a
 reverse =
-  foldLeft (flip (:)) Nil
+  foldLeft (flip (:.)) Nil
 --   error "todo: Course.List#reverse"
 
 -- | Produce an infinite `List` that seeds with the given value at its head,
