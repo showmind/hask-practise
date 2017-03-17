@@ -62,7 +62,8 @@ infixl 4 <*>
   -> f a
   -> f b
 (<$>) =
-  error "todo: Course.Applicative#(<$>)"
+  (<*>) . pure
+--   error "todo: Course.Applicative#(<$>)"
 
 -- | Insert into Id.
 --
@@ -74,14 +75,14 @@ instance Applicative Id where
   pure ::
     a
     -> Id a
-  pure =
-    error "todo: Course.Applicative pure#instance Id"
+  pure = Id
+--     error "todo: Course.Applicative pure#instance Id"
   (<*>) :: 
     Id (a -> b)
     -> Id a
     -> Id b
-  (<*>) =
-    error "todo: Course.Applicative (<*>)#instance Id"
+  (<*>) (Id f) = (<$>) f
+--     error "todo: Course.Applicative (<*>)#instance Id"
 
 -- | Insert into a List.
 --
@@ -94,13 +95,15 @@ instance Applicative List where
     a
     -> List a
   pure =
-    error "todo: Course.Applicative pure#instance List"
+    (:. Nil)
+--     error "todo: Course.Applicative pure#instance List"
   (<*>) ::
     List (a -> b)
     -> List a
     -> List b
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance List"
+  (<*>) fs aa =
+    flatMap (\f->map f aa) fs
+--     error "todo: Course.Apply (<*>)#instance List"
 
 -- | Insert into an Optional.
 --
@@ -119,13 +122,15 @@ instance Applicative Optional where
     a
     -> Optional a
   pure =
-    error "todo: Course.Applicative pure#instance Optional"
+    Full
+--     error "todo: Course.Applicative pure#instance Optional"
   (<*>) ::
     Optional (a -> b)
     -> Optional a
     -> Optional b
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance Optional"
+  (<*>) Empty _ = Empty
+  (<*>) (Full f) a=f <$> a
+--     error "todo: Course.Apply (<*>)#instance Optional"
 
 -- | Insert into a constant function.
 --
@@ -150,13 +155,15 @@ instance Applicative ((->) t) where
     a
     -> ((->) t a)
   pure =
-    error "todo: Course.Applicative pure#((->) t)"
+    const
+--     error "todo: Course.Applicative pure#((->) t)"
   (<*>) ::
     ((->) t (a -> b))
     -> ((->) t a)
     -> ((->) t b)
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance ((->) t)"
+  (<*>) ff fa = \x-> ff x (fa x)
+
+--     error "todo: Course.Apply (<*>)#instance ((->) t)"
 
 
 -- | Apply a binary function in the environment.
@@ -184,8 +191,8 @@ lift2 ::
   -> f a
   -> f b
   -> f c
-lift2 =
-  error "todo: Course.Applicative#lift2"
+lift2 f a b = f <*> a <*> b
+--   error "todo: Course.Applicative#lift2"
 
 -- | Apply a ternary function in the environment.
 --
@@ -216,8 +223,8 @@ lift3 ::
   -> f b
   -> f c
   -> f d
-lift3 =
-  error "todo: Course.Applicative#lift3"
+lift3  f a b c= f <*> a <*> b <*> c
+--   error "todo: Course.Applicative#lift3"
 
 -- | Apply a quaternary function in the environment.
 --
@@ -249,8 +256,8 @@ lift4 ::
   -> f c
   -> f d
   -> f e
-lift4 =
-  error "todo: Course.Applicative#lift4"
+lift4 f a b c d= f <*> a <*> b <*> c <*> d
+--   error "todo: Course.Applicative#lift4"
 
 -- | Apply, discarding the value of the first argument.
 -- Pronounced, right apply.
@@ -275,8 +282,8 @@ lift4 =
   f a
   -> f b
   -> f b
-(*>) =
-  error "todo: Course.Applicative#(*>)"
+(*>) f a = flip const <$> f <*> a
+--   error "todo: Course.Applicative#(*>)"
 
 -- | Apply, discarding the value of the second argument.
 -- Pronounced, left apply.
@@ -301,8 +308,8 @@ lift4 =
   f b
   -> f a
   -> f b
-(<*) =
-  error "todo: Course.Applicative#(<*)"
+(<*) = (<*>) . (<$>) const
+--   error "todo: Course.Applicative#(<*)"
 
 -- | Sequences a list of structures to a structure of list.
 --
@@ -324,8 +331,9 @@ sequence ::
   Applicative f =>
   List (f a)
   -> f (List a)
-sequence =
-  error "todo: Course.Applicative#sequence"
+sequence=
+  foldRight (\x xs -> (:.) <$> x <*> xs ) (pure Nil)
+--   error "todo: Course.Applicative#sequence"
 
 -- | Replicate an effect a given number of times.
 --
@@ -349,7 +357,8 @@ replicateA ::
   -> f a
   -> f (List a)
 replicateA =
-  error "todo: Course.Applicative#replicateA"
+  sequence $ replicate
+--   error "todo: Course.Applicative#replicateA"
 
 -- | Filter a list with a predicate that produces an effect.
 --
@@ -376,7 +385,8 @@ filtering ::
   (a -> f Bool)
   -> List a
   -> f (List a)
-filtering =
+filtering f xs=
+  sequence $ filter (\x-> const <$> f x) xs
   error "todo: Course.Applicative#filtering"
 
 -----------------------

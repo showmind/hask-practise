@@ -90,7 +90,7 @@ headOr _ (y:.ys)=y
 product ::
   List Int
   -> Int
-product Nil=0
+
 product =
   foldRight (*) 1
 --error "todo: Course.List#product"
@@ -119,7 +119,7 @@ length ::
   List a
   -> Int
 length =
-  foldRight (\x a->a+1) 0
+  foldRight ((+) . const 1) 0
 --error "todo: Course.List#length"
 
 -- | Map the given function on each element of the list.
@@ -142,7 +142,7 @@ map f=
 --
 -- >>> filter even (1 :. 2 :. 3 :. 4 :. 5 :. Nil)
 -- [2,4]
---/
+-- /
 -- prop> headOr x (filter (const True) infinity) == 0
 --
 -- prop> filter (const True) x == x
@@ -210,8 +210,8 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  flatten.map
+flatMap f ls=
+  flatten (map f ls)
   --error "todo: Course.List#flatMap"
 
 -- | Flatten a list of lists to a list (again).
@@ -250,8 +250,13 @@ flattenAgain =
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional ls=
-  if filter (== Empty) ls =/ Nil then Empty else Full $ map (\(Full a) ->a) ls
+
+seqOptional  ls=seqO (Full . id) ls
+        where seqO y Nil=y Nil
+              seqO y (Full t:.ts)=seqO (y.(t:.)) ts
+              seqO _ (Empty:._)=Empty
+
+
 --   error "todo: Course.List#seqOptional"
 
 
@@ -275,8 +280,8 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find p xs= case filter p xs of Nil    -> Empty
-                               (a:.as) ->a
+find _ Nil=Empty
+find p (x:.xs)=if p x then Full x else find p xs
 
 --   error "todo: Course.List#find"
 
