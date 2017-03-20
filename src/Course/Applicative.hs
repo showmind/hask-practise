@@ -386,8 +386,12 @@ filtering ::
   -> List a
   -> f (List a)
 filtering f xs=
-  sequence $ filter (\x-> const <$> f x) xs
-  error "todo: Course.Applicative#filtering"
+  (xs `filtBy`) <$> (sequence . map f $ xs)
+  where
+    filtBy::[a]->[Bool]->[a]
+    filtBy xs ps=map fst . filter  snd $ zip xs ps
+    --get answer from "http://codereview.stackexchange.com/questions/85262/implement-filtering"
+--   error "todo: Course.Applicative#filtering"
 
 -----------------------
 -- SUPPORT LIBRARIES --
