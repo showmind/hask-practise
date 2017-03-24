@@ -83,31 +83,31 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
+run arg= (getFile arg) >>=(\path ctx->)
   error "todo: Course.FileIO#run"
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+getFiles fl = sequence $ getFile <$> fl
+--   error "todo: Course.FileIO#getFiles"
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile path= readFile path >>= (\content->return (path,content))
+--   error "todo: Course.FileIO#getFile"
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+printFiles =join $ fmap printFile
+--   error "todo: Course.FileIO#printFiles"
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile path ctx=putStrLn ctx >> (putStrLn $ line ctx)
+--   error "todo: Course.FileIO#printFile"
 
