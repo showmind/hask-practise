@@ -68,7 +68,8 @@ infixr 1 =<<
   f (a -> b)
   -> f a
   -> f b
-(<*>) f a = (\x->x <$> f) =<< a
+(<*>) f a =
+   (\x->((\f'-> pure (f' x))=<< f)) =<< a
 
 --   error "todo: Course.Monad#(<*>)"
 
@@ -122,7 +123,7 @@ instance Monad ((->) t) where
     (a -> ((->) t b))
     -> ((->) t a)
     -> ((->) t b)
-  (=<<) f g=(\x->(f.g x) x)
+  (=<<) f g x=f (g x) x
 
 --     error "todo: Course.Monad (=<<)#instance ((->) t)"
 
@@ -157,7 +158,7 @@ join = (=<<) id
   f a
   -> (a -> f b)
   -> f b
-(>>=) a f = join (a <$> f)
+(>>=) a f = f =<< a
 --   error "todo: Course.Monad#(>>=)"
 
 infixl 1 >>=
@@ -173,7 +174,7 @@ infixl 1 >>=
   -> (a -> f b)
   -> a
   -> f c
-(<=<) f1 f2 a =(pure a) >>= f2 >>= f1
+(<=<) f1 f2 a = f1 =<< f2 =<< pure a
 
 --   error "todo: Course.Monad#(<=<)"
 
