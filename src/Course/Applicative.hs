@@ -191,7 +191,7 @@ lift2 ::
   -> f a
   -> f b
   -> f c
-lift2 f a b = f <*> a <*> b
+lift2 f a b = f <$> a <*> b
 --   error "todo: Course.Applicative#lift2"
 
 -- | Apply a ternary function in the environment.
@@ -223,7 +223,7 @@ lift3 ::
   -> f b
   -> f c
   -> f d
-lift3  f a b c= f <*> a <*> b <*> c
+lift3  f a b c= f <$> a <*> b <*> c
 --   error "todo: Course.Applicative#lift3"
 
 -- | Apply a quaternary function in the environment.
@@ -256,7 +256,7 @@ lift4 ::
   -> f c
   -> f d
   -> f e
-lift4 f a b c d= f <*> a <*> b <*> c <*> d
+lift4 f a b c d= f <$> a <*> b <*> c <*> d
 --   error "todo: Course.Applicative#lift4"
 
 -- | Apply, discarding the value of the first argument.
@@ -356,8 +356,8 @@ replicateA ::
   Int
   -> f a
   -> f (List a)
-replicateA =
-  sequence $ replicate
+replicateA n a=
+  sequence $ replicate n a
 --   error "todo: Course.Applicative#replicateA"
 
 -- | Filter a list with a predicate that produces an effect.
@@ -388,7 +388,7 @@ filtering ::
 filtering f xs=
   (xs `filtBy`) <$> (sequence . map f $ xs)
   where
-    filtBy::[a]->[Bool]->[a]
+    filtBy::List a->List Bool->List a
     filtBy xs ps=map fst . filter  snd $ zip xs ps
     --get answer from "http://codereview.stackexchange.com/questions/85262/implement-filtering"
 --   error "todo: Course.Applicative#filtering"
