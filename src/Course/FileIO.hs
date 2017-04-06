@@ -73,8 +73,10 @@ the contents of c
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo: Course.FileIO#main"
+main = getArgs >>=(\a-> run $ headOr (listh "share/files.txt") a)
+--   error "todo: Course.FileIO#main"
+
+headL (x:._)=x
 
 type FilePath =
   Chars
@@ -83,13 +85,13 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run arg= (getFile arg) >>=(\path ctx->)
-  error "todo: Course.FileIO#run"
+run arg= getFile arg >>= (\(p,c)->getFiles $ lines c ) >>= printFiles
+--   error "todo: Course.FileIO#run"
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles fl = sequence $ getFile <$> fl
+getFiles fl = sequence $ map getFile fl
 --   error "todo: Course.FileIO#getFiles"
 
 getFile ::
@@ -101,13 +103,13 @@ getFile path= readFile path >>= (\content->return (path,content))
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =join $ fmap printFile
+printFiles ts= void (sequence$map (\(p,c)->printFile p c) ts )
 --   error "todo: Course.FileIO#printFiles"
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile path ctx=putStrLn ctx >> (putStrLn $ line ctx)
+printFile path other=putStrLn path >> (putStrLn other)
 --   error "todo: Course.FileIO#printFile"
 
